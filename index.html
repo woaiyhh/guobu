@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安以旧换新备注生成器</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            color: #1d1d1f;
+            min-height: 100vh;
+            padding: 20px 12px;
+        }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(30px);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12),
+                        inset 0 1px 0 rgba(255,255,255,0.8);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        header {
+            background: linear-gradient(90deg, #007aff, #5ac8fa);
+            color: white;
+            text-align: center;
+            padding: 28px 20px 24px;
+        }
+        h1 {
+            font-size: 21px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 24px 20px 30px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        select, input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d2d2d7;
+            border-radius: 14px;
+            font-size: 17px;
+        }
+        .result {
+            border: 1px solid #d2d2d7;
+            border-radius: 18px;
+            padding: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 160px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 18px;
+            background: #34c759;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+        }
+        .success {
+            text-align: center;
+            color: #34c759;
+            margin-top: 10px;
+            opacity: 0;
+            transition: .3s;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+<header>
+<h1>西安以旧换新补贴<br>开票备注生成器</h1>
+</header>
+
+<div class="content">
+
+<div class="form-group">
+<label>区县</label>
+<select id="district">
+<option>新城区</option>
+<option>碑林区</option>
+<option>莲湖区</option>
+<option>灞桥区</option>
+<option selected>未央区</option>
+<option>雁塔区</option>
+<option>阎良区</option>
+<option>临潼区</option>
+<option>长安区</option>
+<option>高陵区</option>
+<option>鄠邑区</option>
+<option>蓝田县</option>
+<option>周至县</option>
+<option>西咸新区</option>
+<option>高新区</option>
+<option>经开区</option>
+<option>曲江新区</option>
+<option>浐灞国际港</option>
+<option>航天基地</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>初始价格</label>
+<select id="price">
+<option>5999</option>
+<option>5699</option>
+<option>5299</option>
+<option>5199</option>
+<option>4799</option>
+<option>4499</option>
+<option selected>3499</option>
+<option>3199</option>
+<option>2999</option>
+<option>2199</option>
+<option>1999</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>手机号</label>
+<input id="phone" value="18693333884">
+</div>
+
+<div class="result" id="result"></div>
+
+<button onclick="copyText()">复制备注</button>
+<div class="success" id="success">已复制</div>
+
+</div>
+</div>
+
+<script>
+const district = document.getElementById('district');
+const price = document.getElementById('price');
+const phone = document.getElementById('phone');
+const result = document.getElementById('result');
+const success = document.getElementById('success');
+
+function calc(){
+    let original = Number(price.value);
+
+    let discount = original * 0.15;
+    if(discount > 500) discount = 500;
+
+    discount = Math.round(discount * 100) / 100;
+    let final = Math.round((original - discount) * 100) / 100;
+
+    // ✅ 已修复模板字符串
+    let text = `西安以旧换新，购买方地址，陕西省西安市${district.value}，产品初始销售价格${original}元，最终销售价格${final}元，享受补贴资金数额${discount}元，其他优惠金额0元，消费者实际支付金额${final}元，消费者手机号${phone.value || '未填写'}`;
+
+    result.innerText = text;
+}
+
+district.onchange = calc;
+price.onchange = calc;
+phone.oninput = calc;
+
+calc();
+
+function copyText(){
+    navigator.clipboard.writeText(result.innerText);
+    success.style.opacity = 1;
+    setTimeout(()=>success.style.opacity=0,1500);
+}
+</script>
+
+</body>
+</html>
